@@ -2,10 +2,21 @@ import axios from "axios"
 import { Parser } from "json2csv"
 import fs from "node:fs"
 
-const getData = async () => {
+const getDataWithLimit = async (limit) => {
   try {
     const { data } = await axios.get(
-      "https://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?table=cumulative&format=json"
+      `https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+TOP+${limit}+*+from+cumulative&format=json`
+    );
+    return data;
+  } catch (error) {
+    console.error("Erro", error.message);
+  }
+}
+
+const getData = async (limit) => {
+  try {
+    const { data } = await axios.get(
+      `https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+*+from+cumulative&format=json`
     );
     return data;
   } catch (error) {
@@ -38,19 +49,22 @@ const getDataByDescription = async (desc) => {
     console.error(error.message);
   }
 }
-const generateCSV = async (desc, filename) => {
 
-  const data = desc ? await getDataByDescription(desc) : await getData();
-  const fields = Object.keys(data[0]);
-  const opts = { fields };
+const generateCSV = (data, filename = "output", fields = null) => {
+  if (!Array.isArray(data) || data.length == 0) {
+    console.error("Nenhum dado fornecido para gerar CSV.");
+    return;
+  }
   try {
+    const opts = { fields: fields || Object.keys(data[0]) };
     const parser = new Parser(opts);
     const csv = parser.parse(data);
     fs.writeFileSync(`${filename}.csv`, csv);
-    console.log("✅ CSV gerado com sucesso!");
-  } catch (error) {
-    console.error(error.message);
+    console.log(`✅ CSV '${filename}.csv' gerado com sucesso!`);
+  } 
+  catch (error) {
+    console.error("Erro ao gerar CSV:", error.message);
   }
 }
-
-await generateCSV('CONFIRMED', 'data_by_description_confirmed');
+const data = await getDataWithLimit(1);
+generateCSV(data, "new1",["kepid", "kepoi_name"]);
