@@ -13,7 +13,7 @@ const getDataWithLimit = async (limit) => {
   }
 }
 
-const getData = async (limit) => {
+const getData = async () => {
   try {
     const { data } = await axios.get(
       `https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+*+from+cumulative&format=json`
