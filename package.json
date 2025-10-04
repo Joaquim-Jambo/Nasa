@@ -2,9 +2,10 @@
   "name": "nasa",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
   },
   "repository": {
     "type": "git",
@@ -20,6 +21,9 @@
   "homepage": "https://github.com/Joaquim-Jambo/Nasa#readme",
   "dependencies": {
     "axios": "^1.12.2",
-    "json2csv": "^6.0.0-alpha.2"
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "json2csv": "^6.0.0-alpha.2",
+    "nodemon": "^3.1.10"
   }
 }
